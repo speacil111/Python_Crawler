@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歌手介绍</title>
+    <style>
+
+.top {
+    display: flex;
+    margin-left: 10px;
+    font-size: 20px;
+    gap: 20px; 
+
+    justify-content: space-between;
+}
+.topleft a {
+    display: inline-block; 
+    background-color: #4CAF50; 
+    color: white;
+    padding: 10px 20px; 
+    margin: 10px; 
+    text-decoration: none; 
+    font-size: 16px; 
+    border: none; 
+    border-radius: 5px; 
+    transition: background-color 0.3s; 
+}
+
+.topleft a:hover {
+    background-color: #45a049; 
+}
+.topleft a:active {
+    background-color: #174419; 
+}
+.topright{
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+form {
+    margin-top: 6px;
+    border: none; 
+    padding: 0;
+}
+
+form input[type="text"] {
+    flex-grow: 1; 
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+}
+
+form button[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+
+        .title {
+            font-size: 24px;
+            color: #333;
+            padding: 10px;
+            margin-left: 10px;
+        }
+
+        .singer_info, .song_item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .singer_info span, .song_item span {
+            font-weight: bold;
+        }
+
+        .singer_info a, .song_item a {
+            color: #1a0dab;
+            text-decoration: none;
+        }
+
+        .image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 20px;
+            border-radius: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                width: 75%;
+                margin: 0 auto;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="top">
+        <div class="topleft">
+            <a href="/song_list">歌曲列表</a>
+            <a href="/singer_list">歌手列表</a>
+        </div>
+        <div class="topright">
+            <form action="/search/" method="get">
+                <input type="text" name="query" placeholder="搜索歌曲、艺人">
+                <button type="submit">搜索</button>
+                <div class="opt">
+                    <label><small>搜索类型：</small></label>
+                    <input type="radio" name="type"  value="song" ><small>歌曲</small>
+                    <input type="radio" name="type" value="singer" checked><small>艺人</small>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+    <h1 class="title">歌手详情</h1>
+    <div class="singer_info">
+        <a href={{singer.cover}}>
+            <img src="{{ singer.cover }}" class="image" alt="">
+        </a>
+        <span><big>艺名: {{ singer.name }}</big></span>
+        <p><span>艺人介绍：</span>{{ singer.intro }}</p>
+        <span>原始网站：</span>
+        <a href="{{ singer.original_url }}" target="_blank">{{ singer.original_url }}</a>
+    </div>
+
+    <h2 class="title">该艺人热门歌曲</h2>
+    <div class="songs">
+        {% for song in Songs %}
+        <div class="song_item">
+            <img src="{{ song.cover }}" class="song_image" alt=""
+            style="width: 60px; height: 60px;">
+            <a href="{% url 'song_detail' id=song.song_id %}">{{ song.name }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let message = '';
+        if (urlParams.has('no_results')) {
+            message = '没有找到相关歌曲！';
+        } else if (urlParams.has('error')) {
+            message = '搜索种类错误!';
+        }
+
+        if (urlParams.has('search_time')) {
+            const searchTime = parseFloat(urlParams.get('search_time')).toFixed(3);
+            message += ` 搜索用时：${searchTime}秒。`;
+        }
+
+        if (message) {
+            alert(message);
+        }
+    });
+</script>
+
+</html>
