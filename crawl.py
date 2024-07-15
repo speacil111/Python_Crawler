@@ -27,8 +27,6 @@ def get_song(url):
 
     response = requests.get(url=url,headers=headers)
     html=response.text
-    with open('song.html','w',encoding='utf-8') as f:
-        f.write(html)
     song_list=re.findall('<li><a href="/song\?id=(.*?)">(.*?)</a></li>',html)
     for song in song_list:
         #歌曲名、歌手名
@@ -96,7 +94,8 @@ def get_singer():
     }
     data=pd.read_csv('song.csv')
     id=data['singer_id']
-    for singer_item in id[2200:]:
+    #最好分组爬取
+    for singer_item in id:
         url_singer=f'https://music.163.com/artist?id={singer_item}' #歌手原始url
         print(url_singer)
         try:
@@ -262,7 +261,4 @@ if __name__ == '__main__':
         get_song(url)   # 爬歌词需要url，歌手不需要
     get_song_by_lists('https://music.163.com/discover/playlist/?order=hot&cat=%E5%8D%8E%E8%AF%AD&limit=35&offset=70')
     get_singer() #需要爬取song.csv中的singer_id
-
-    data=pd.read_csv('singer.csv')
-    print(len(data))
     print('爬取完成')
